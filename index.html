@@ -172,7 +172,7 @@
         }
     });
 
-    document.getElementById('cropBtn').addEventListener('click', function() {
+   /* document.getElementById('cropBtn').addEventListener('click', function() {
         const canvas = cropper.getCroppedCanvas({
             width: 1000, 
             height: 1000,
@@ -182,21 +182,55 @@
         cropModal.style.display = 'none';
         overlay.style.display = 'none';  // Hide overlay
         downloadBtn.style.display = 'block';
-    });
+    }); */
+
+    document.getElementById('cropBtn').addEventListener('click', function() {
+  const canvas = cropper.getCroppedCanvas({
+    width: 1000,
+    height: 1000,
+  });
+
+  // Display the cropped image in the modal for preview (400x400)
+  const previewCanvas = document.createElement('canvas');
+  previewCanvas.width = 400;
+  previewCanvas.height = 400;
+  const ctx = previewCanvas.getContext('2d');
+  ctx.drawImage(canvas, 0, 0, 400, 400);
+  cropImage.src = previewCanvas.toDataURL();
+
+  // Create a new canvas and draw the frame overlay
+  const framedCanvas = document.createElement('canvas');
+  framedCanvas.width = 1000;
+  framedCanvas.height = 1000;
+  const framedCtx = framedCanvas.getContext('2d');
+  framedCtx.drawImage(canvas, 0, 0); // Draw the cropped image
+  framedCtx.drawImage(frameOverlay, 0, 0); // Draw the frame overlay
+
+  // Download the framed image
+  const link = document.createElement('a');
+  link.download = 'framed_pfp.png';
+  link.href = framedCanvas.toDataURL();
+  link.click();
+
+  // Hide the modal and show the download button
+  cropModal.style.display = 'none';
+  overlay.style.display = 'none';
+  downloadBtn.style.display = 'block';
+});
 
     downloadBtn.addEventListener('click', function() {
         const frameContainer = document.getElementById('frame');
-        html2canvas(frameContainer, {
-            width: 1000,
-            height: 1000,
-            scale: 5, 
-        }).then(canvas => {
+        html2canvas(frameContainer)
+        .then(canvas => {
             const link = document.createElement('a');
             link.download = 'framed_pfp.png';
             link.href = canvas.toDataURL();
             link.click();
         });
     });
+
+
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
